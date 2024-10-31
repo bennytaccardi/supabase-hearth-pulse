@@ -1,0 +1,14 @@
+{
+  "db1": {
+    "dbUrl": "<first db url>",
+    "dbAnonKey": "<first db anon key>"
+  },
+  "db2": {
+    "dbUrl": "<second db url>",
+    "dbAnonKey": "<second db anon key>"
+  },
+  "db3": {
+    "dbUrl": "<third db url>",
+    "dbAnonKey": "<third db anon key>"
+  }
+}

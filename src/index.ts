@@ -1,20 +1,21 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
+import dbConfigs from "../config.json";
+import { SupabaseConfig } from "./types/types";
 
-const supabaseUrl = "YOUR_SUPABASE_URL";
-const supabaseAnonKey = "YOUR_SUPABASE_ANON_KEY";
+const configs = dbConfigs as SupabaseConfig;
 
-const supabase = createClient(
-  "https://vlxxkfybifhklskgwsyi.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZseHhrZnliaWZoa2xza2d3c3lpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjc4MTY4MDksImV4cCI6MjA0MzM5MjgwOX0.jRdiwXaqK63p-DiVlgwB_n4PBZBkFwA-WaRAGT5WOhw"
-);
-
-const test = async () => {
-  try {
-    const res = await supabase.from("keep-alive").insert({ name: "test" });
-    console.log(res);
-  } catch (e) {
-    console.log(e);
-  }
-  console.log("eccomi");
+const keepAlive = async (client: SupabaseClient) => {
+  await client.from("keep-alive").delete().neq("id", 0);
+  await client.from("keep-alive").insert({ name: "test" });
 };
-test();
+
+const main = async () => {
+  for (const db in configs) {
+    const config = configs[db];
+    const client = createClient(config.dbUrl, config.dbAnonKey);
+    await keepAlive(client);
+  }
+  process.exit(0);
+};
+
+main();
