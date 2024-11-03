@@ -98,7 +98,6 @@ describe("Tests of main business logic", async () => {
       },
     };
     vi.spyOn(serviceModule, "keepAlive").mockImplementation(async () => {
-      console.log("Mock keepAlive called");
       Promise.resolve();
     });
     // when

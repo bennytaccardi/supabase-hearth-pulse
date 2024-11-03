@@ -6,10 +6,13 @@ import * as serviceModule from "./service";
  * Keeps the connection alive by performing a delete and insert operation.
  * @param client - The Supabase client instance.
  */
-export const keepAlive = async (client: SupabaseClient): Promise<void> => {
+export const keepAlive = async (
+  client: SupabaseClient,
+  tableName: string
+): Promise<void> => {
   try {
-    await client.from("keep-alive").delete().neq("id", 0);
-    await client.from("keep-alive").insert({ name: "test" });
+    await client.from(tableName).delete().neq("id", 0);
+    await client.from(tableName).insert({ name: crypto.randomUUID() });
   } catch (error) {
     console.error("Error in keep-alive operation:", error);
     throw error;
@@ -20,6 +23,7 @@ export const keepAlive = async (client: SupabaseClient): Promise<void> => {
  * Main function to iterate over each config and perform keep-alive operations.
  */
 export const handler = async (localConfigs: SupabaseConfig) => {
+  const referenceTableName = process.env.TABLE_NAME ?? "keep-alive";
   try {
     for (const db in localConfigs) {
       const config = localConfigs[db];
@@ -32,7 +36,7 @@ export const handler = async (localConfigs: SupabaseConfig) => {
       console.log(`Keeping alive ${db}...`);
       const client = createClient(config.dbUrl, config.dbAnonKey);
 
-      await serviceModule.keepAlive(client);
+      await serviceModule.keepAlive(client, referenceTableName);
     }
 
     console.log("All keep-alive operations completed successfully.");
